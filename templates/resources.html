@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block nav_resources %} active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h2">Resources</h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Host</th>
+            <th>CPU count</th>
+            <th>CPU usage</th>
+            <th>Memory usage</th>
+            <th>Disk usage</th>
+            <th>Updated</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for resource in resources %}
+        <tr id="{{ resource.host.id }}">
+            <td>{{ resource.host.ip }}</td>
+            <td id="cpu-count">{{ resource.cpu_count }}</td>
+            <td id="cpu-usage">{{ resource.cpu_usage }}%</td>
+            <td id="mem-usage">{{ resource.mem_usage }}%</td>
+            <td id="disk-usage">{{ resource.disk_usage }}%</td>
+            <td id="updated-at">{{ resource.updated_at.ctime() }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block foot %}
+<script>
+    $(document).ready(function() {
+      setInterval(function() {
+        $.get("{{ url_for('resources', format='json') }}", function(data) {
+          for (host_id in data) {
+            $("tr#"+host_id).find("td#cpu-count").text(data[host_id]["cpu_count"]);
+            $("tr#"+host_id).find("td#cpu-usage").text(data[host_id]["cpu_usage"]+"%");
+            $("tr#"+host_id).find("td#mem-usage").text(data[host_id]["mem_usage"]+"%");
+            $("tr#"+host_id).find("td#disk-usage").text(data[host_id]["disk_usage"]+"%");
+            $("tr#"+host_id).find("td#updated-at").text(data[host_id]["updated_at"]);
+          }
+        });
+      }, 2000);  // update every 2 seconds
+    });
+
+</script>
+{% endblock %}

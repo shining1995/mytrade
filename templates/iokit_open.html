@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block nav_crash_view %} active{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h2">Crash view</h1>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 bottom-custom">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h2 class="card-title text-primary" id="sum-worker">{% if sum_worker %}{{ sum_worker }}{% else %}0{% endif %}</h2>
+              <h5 class="card-text">Workers</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 bottom-custom">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h2 class="card-title text-success" id="sum-proc">{% if sum_proc %}{{ sum_proc }}{% else %}0{% endif %}</h2>
+              <h5 class="card-text">Processes</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 bottom-custom">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h2 class="card-title text-warning" id="sum-crash">{% if sum_crash %}{{ sum_crash }}{% else %}0{% endif %}</h2>
+              <h5 class="card-text">Crashes</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 bottom-custom">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h2 class="card-title text-info" id="sum-case">{% if sum_case %}{{ sum_case }}{% else %}0{% endif %}</h2>
+              <h5 class="card-text">Cases</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Crash Statistics</h5>
+          <canvas class="card-text my-4 w-100" id="chart" height="250"></canvas>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block foot %}
+  <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+  <script>
+    $(document).ready(function() {
+      var ctx = document.getElementById("chart");
+      var chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: {{ chart_labels|safe }},
+          datasets: [{
+            data: {{ chart_datas }},
+            lineTension: 0,
+            backgroundColor: "transparent",
+            borderColor: "#007bff",
+            borderWidth: 4,
+            pointBackgroundColor: "#007bff"
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: false
+              }
+            }]
+          },
+          legend: {
+            display: false,
+          }
+        }
+      });
+
+      setInterval(function() {
+        $.get("{{ url_for('dashboard', format='json') }}", function(data) {
+          $("#sum-worker").text(data["sum_worker"]);
+          $("#sum-proc").text(data["sum_proc"]);
+          $("#sum-crash").text(data["sum_crash"]);
+          $("#sum-case").text(data["sum_case"]);
+          chart.data.labels = data["chart"]["labels"];
+          chart.data.datasets[0].data = data["chart"]["datas"];
+          chart.update();
+        });
+      }, 2000);  // update every 2 seconds
+    });
+  </script>
+{% endblock %}

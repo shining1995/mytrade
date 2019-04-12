@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block nav_crashes %} active{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h2">Crashes</h1>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Host</th>
+          <th>Crash</th>
+          <th>Case</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for crash in crashes %}
+          <tr>
+            <td>{{ loop.index+20*(page-1) }}</td>
+            <td><a href="{{ url_for('crashes_of_worker', uuid=crash.host.id) }}">{{ crash.host.ip }}</a></td>
+            <td><a href="{{ url_for('crash_detail', uuid=crash.host.id, crash_id=crash.id, type='crash') }}">{{ crash.crash_name|omit_long }}</a></td>
+            <td><a href="{{ url_for('crash_detail', uuid=crash.host.id, crash_id=crash.id, type='case') }}">{{ crash.case_name|omit_long }}</a></td>
+            <td>{{ crash.created_at.ctime() }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pages > 1 %}
+    <ul class="pagination">
+      <li class="page-item{% if page <= 1 %} disabled{% endif %}">
+        <a class="page-link"{% if page > 1 %} href="{{ url_for('crashes', page=page-1) }}{% endif %}">Previous</a>
+      </li>
+      {% if pages <= 10 %}
+        {% for n in range(1, pages+1) %}
+          <li class="page-item{% if n == page %} active{% endif %}"><a class="page-link" href="{{ url_for('crashes', page=n) }}">{{ n }}</a></li>
+        {% endfor %}
+      {% elif pages > 10 and page < 8 %}
+        {% for n in range(1, 11) %}
+          <li class="page-item{% if n == page %} active{% endif %}"><a class="page-link" href="{{ url_for('crashes', page=n) }}">{{ n }}</a></li>
+        {% endfor %}
+      {% elif pages > 10 and page > (pages-2) %}
+        {% for n in range(pages-9, pages+1) %}
+          <li class="page-item{% if n == page %} active{% endif %}"><a class="page-link" href="{{ url_for('crashes', page=n) }}">{{ n }}</a></li>
+        {% endfor %}
+      {% else %}
+        {% for n in range(page-7, page+3) %}
+          <li class="page-item{% if n == page %} active{% endif %}"><a class="page-link" href="{{ url_for('crashes', page=n) }}">{{ n }}</a></li>
+        {% endfor %}
+      {% endif %}
+      <li class="page-item{% if page >= pages %} disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('crashes', page=page+1) }}">Next</a>
+      </li>
+    </ul>
+  {% endif %}
+{% endblock %}

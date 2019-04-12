@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="gsfish">
+    <title>Fuzz Manager</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url_for('index') }}">Fuzz Manager</a>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link{% block nav_dashboard%}{% endblock %}" href="{{ url_for('dashboard') }}">
+                  <span data-feather="bar-chart-2"></span>
+                  Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_resources%}{% endblock %}" href="{{ url_for('resources') }}">
+                  <span data-feather="cpu"></span>
+                  Resources
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_workers%}{% endblock %}" href="{{ url_for('workers') }}">
+                  <span data-feather="server"></span>
+                  Workers
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_crashes%}{% endblock %}" href="{{ url_for('crashes') }}">
+                  <span data-feather="file-text"></span>
+                  Crashes
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_logs%}{% endblock %}" href="{{ url_for('logs') }}">
+                  <span data-feather="file-text"></span>
+                  Logs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_corpus%}{% endblock %}" href="{{ url_for('passive_corpus') }}">
+                  <span data-feather="file-text"></span>
+                  Passive corpus
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link{% block nav_crash_view%}{% endblock %}" href="{{ url_for('iokit_open') }}">
+                  <span data-feather="file-text"></span>
+                  Crash view
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for("static", filename="js/feather.min.js") }}"></script>
+    <script>feather.replace()</script>
+    {% block foot %}{% endblock %}
+  </body>
+</html>

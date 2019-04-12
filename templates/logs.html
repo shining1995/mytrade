@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block nav_logs %} active{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h2">Logs</h1>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Host</th>
+          <th>Log</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for worker in workers %}
+          <tr>
+            <td>{{ worker.ip }}</td>
+            <td><a href="{{ url_for('log_detail', uuid=worker.id) }}">view</a></td>
+            <td>{{ worker.resource.updated_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

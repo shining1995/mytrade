@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block nav_workers %} active{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h2">Workers</h1>
+  </div>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Host</th>
+          <th>Crashes</th>
+          <th>Processes</th>
+          <th>Started</th>
+          <th>Runtime</th>
+          <th>Updated</th>
+          <th>Status</th>
+          <th>Control</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for worker in workers %}
+          <tr>
+            <td>{{ worker.ip }}</td>
+            <td><span class="badge badge-pill badge-{% if worker.crash_count == 0 %}secondary{% else %}warning{% endif %}">{{ worker.crash_count }}</span></td>
+            <td>{{ worker.proc_count }}</td>
+
+            {% if worker.is_alive %}
+              <td>{{ worker.started_at }}</td>
+              <td>{{ worker.runtime }}</td>
+              <td>{{ worker.updated_at }}</td>
+              <td><span class="badge badge-success">running</span></td>
+              <td><a href="{{ url_for('worker_control', uuid=worker.id, action='stop') }}">STOP</a></td>
+            {% else %}
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>{{ worker.updated_at }}</td>
+              <td><span class="badge badge-danger">stopped</span></td>
+              <td><a href="{{ url_for('worker_control', uuid=worker.id, action='run') }}">RUN</a></td>
+            {% endif %}
+
+            <td><a href="{{ url_for('crashes_of_worker', uuid=worker.id) }}">crash</a></td>
+            <td><a href="{{ url_for('log_detail', uuid=worker.id) }}">log</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block foot %}
+  <script>
+    setInterval('window.location.reload()', 10000);  // refresh every 10 seconds
+  </script>
+{% endblock %}
