@@ -216,6 +216,7 @@ def workers():
         'updated_at': worker.resource.updated_at.ctime(),
     } for worker in Worker.query.all()]
 
+    print(workers)
     return render_template('workers.html', workers=workers)
 
 
