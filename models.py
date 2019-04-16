@@ -176,5 +176,3 @@ class Record(db.Model):
         return '<record %r>' % self.id
 
 
-if __name__ =="__main__":
-    db.create_all()
