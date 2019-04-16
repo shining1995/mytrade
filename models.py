@@ -1,5 +1,6 @@
 import os
 import datetime
+from tradetools.FoundationHelper import get_jingzhi
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -145,3 +146,35 @@ class IokitConnect(db.Model):
 
     def __repr__(self):
         return '<IokitConnect %r>' % self.id
+
+
+######################
+class Record(db.Model):
+    id = db.Column(db.Integer, autoincrement='auto', primary_key=True)
+    base = db.Column(db.Float)
+    beishu = db.Column(db.Float)
+    code = db.Column(db.String(255))
+    buy_date = db.Column(db.DateTime)
+    follow = db.Column(db.Float)
+    jingzhi = db.Column(db.Float)
+    gushu = db.Column(db.Float)
+
+    submit_time = db.Column(db.DateTime)
+
+    def __init__(self, id, date, base, beishu, follow, code):
+        self.id = id
+        self.base = float(base)
+        self.beishu = float(beishu)
+        self.code = code
+        self.buy_date = date if date else (datetime.date.today()).strftime('%Y-%m-%d')
+        self.follow = float(follow) if follow else self.base * float(beishu)
+        self.jingzhi = float(get_jingzhi(code, self.buy_date))
+        self.gushu = round(float(self.follow) / float(self.jingzhi) if self.jingzhi != -1 else -1, 4)
+        self.submit_time = datetime.datetime.now()
+
+    def __repr__(self):
+        return '<record %r>' % self.id
+
+
+if __name__ =="__main__":
+    db.create_all()
